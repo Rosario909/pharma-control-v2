@@ -11,7 +11,7 @@ def init_supabase() -> Client:
     """Crea (una sola vez) el cliente Supabase con la service_role key."""
     global supabase
     if supabase is None:
-        supabase = create_client(Config.SUPABASE_URL, Config.SUPABASE_KEY)
+        supabase = create_client(Config.SUPABASE_URL.strip(), Config.SUPABASE_KEY.strip())
     return supabase
 
 
