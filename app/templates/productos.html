@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Productos — Pharma Control{% endblock %}
+{% block content %}
+  <h1>Productos</h1>
+
+  <form id="form-producto" class="form-inline">
+    <input type="text" id="p-nombre" placeholder="Nombre" required>
+    <input type="text" id="p-registro" placeholder="Registro sanitario" required>
+    <input type="date" id="p-vencimiento" required title="Fecha de vencimiento">
+    <input type="text" id="p-lote" placeholder="Lote (opcional)">
+    <button type="submit" class="btn-primary">Agregar</button>
+  </form>
+  <p id="form-error" class="error" hidden></p>
+
+  <table class="data-table">
+    <thead><tr><th>Nombre</th><th>Registro</th><th>Vencimiento</th><th>Estado</th><th>Score</th><th></th></tr></thead>
+    <tbody id="productos-body"><tr><td colspan="6" class="muted">Cargando…</td></tr></tbody>
+  </table>
+{% endblock %}
+{% block scripts %}
+<script>
+  const body = document.getElementById("productos-body");
+
+  function badge(estado) {
+    const map = { vigente: "approval", por_vencer: "warning", vencido: "critical", inactivo: "" };
+    return `<span class="tag ${map[estado] || ''}">${estado}</span>`;
+  }
+
+  async function cargar() {
+    const res = await apiFetch("/api/productos/");
+    if (!res.ok) { body.innerHTML = '<tr><td colspan="6" class="muted">Error al cargar.</td></tr>'; return; }
+    const { productos } = await res.json();
+    if (!productos.length) { body.innerHTML = '<tr><td colspan="6" class="muted">Sin productos aún.</td></tr>'; return; }
+    body.innerHTML = productos.map(p => `
+      <tr>
+        <td>${p.nombre}</td>
+        <td>${p.registro_sanitario}</td>
+        <td>${p.fecha_vencimiento}</td>
+        <td>${badge(p.estado)}</td>
+        <td>${p.score_riesgo}</td>
+        <td><button class="btn-link del" data-id="${p.id}">Eliminar</button></td>
+      </tr>`).join("");
+    document.querySelectorAll(".del").forEach(b =>
+      b.addEventListener("click", () => eliminar(b.dataset.id)));
+  }
+
+  async function eliminar(id) {
+    if (!confirm("¿Eliminar este producto?")) return;
+    const res = await apiFetch(`/api/productos/${id}`, { method: "DELETE" });
+    if (res.ok) cargar();
+  }
+
+  document.getElementById("form-producto").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const err = document.getElementById("form-error"); err.hidden = true;
+    const payload = {
+      nombre: document.getElementById("p-nombre").value.trim(),
+      registro_sanitario: document.getElementById("p-registro").value.trim(),
+      fecha_vencimiento: document.getElementById("p-vencimiento").value,
+      lote: document.getElementById("p-lote").value.trim(),
+    };
+    const res = await apiFetch("/api/productos/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      err.textContent = d.error || "No se pudo crear el producto"; err.hidden = false; return;
+    }
+    e.target.reset();
+    cargar();
+  });
+
+  cargar();
+</script>
+{% endblock %}

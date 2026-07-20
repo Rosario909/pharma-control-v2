@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Normativas — Pharma Control{% endblock %}
+{% block content %}
+  <h1>Normativas (NOMs)</h1>
+
+  <form id="form-norma" class="form-inline">
+    <input type="text" id="n-codigo" placeholder="Código (NOM-059-SSA1-2015)" required>
+    <input type="text" id="n-titulo" placeholder="Título" required>
+    <input type="text" id="n-url" placeholder="URL (opcional)">
+    <button type="submit" class="btn-primary">Agregar</button>
+  </form>
+  <p id="norma-error" class="error" hidden></p>
+
+  <table class="data-table">
+    <thead><tr><th>Código</th><th>Título</th><th>Vigente</th><th></th></tr></thead>
+    <tbody id="normativas-body"><tr><td colspan="4" class="muted">Cargando…</td></tr></tbody>
+  </table>
+{% endblock %}
+{% block scripts %}
+<script>
+  const body = document.getElementById("normativas-body");
+
+  async function cargar() {
+    const res = await apiFetch("/api/normativas/");
+    if (!res.ok) { body.innerHTML = '<tr><td colspan="4" class="muted">Error al cargar.</td></tr>'; return; }
+    const { normativas } = await res.json();
+    if (!normativas.length) { body.innerHTML = '<tr><td colspan="4" class="muted">Sin normativas aún.</td></tr>'; return; }
+    body.innerHTML = normativas.map(n => `
+      <tr>
+        <td>${n.codigo}</td>
+        <td>${n.titulo}</td>
+        <td>${n.vigente ? '<span class="tag approval">vigente</span>' : '<span class="tag">no vigente</span>'}</td>
+        <td><button class="btn-link del" data-id="${n.id}">Eliminar</button></td>
+      </tr>`).join("");
+    document.querySelectorAll(".del").forEach(b =>
+      b.addEventListener("click", () => eliminar(b.dataset.id)));
+  }
+
+  async function eliminar(id) {
+    if (!confirm("¿Eliminar esta normativa?")) return;
+    const res = await apiFetch(`/api/normativas/${id}`, { method: "DELETE" });
+    if (res.ok) cargar();
+  }
+
+  document.getElementById("form-norma").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const err = document.getElementById("norma-error"); err.hidden = true;
+    const payload = {
+      codigo: document.getElementById("n-codigo").value.trim(),
+      titulo: document.getElementById("n-titulo").value.trim(),
+      url: document.getElementById("n-url").value.trim(),
+    };
+    const res = await apiFetch("/api/normativas/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      err.textContent = d.error || "No se pudo crear la normativa"; err.hidden = false; return;
+    }
+    e.target.reset();
+    cargar();
+  });
+
+  cargar();
+</script>
+{% endblock %}

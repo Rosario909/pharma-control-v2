@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 80" width="380" height="80">
+  <rect width="380" height="80" fill="#162435" rx="10"/>
+  <!-- Isotipo: cuadrado redondeado -->
+  <rect x="14" y="14" width="52" height="52" rx="10" fill="#22FF7F"/>
+  <text x="40" y="48" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="900"
+        fill="#0D1B2A" text-anchor="middle" letter-spacing="-1">PC</text>
+  <!-- Wordmark -->
+  <text x="80" y="34" font-family="Inter,Segoe UI,sans-serif" font-size="18" font-weight="800"
+        fill="#22FF7F" letter-spacing="-0.5">Pharma</text>
+  <text x="80" y="60" font-family="Inter,Segoe UI,sans-serif" font-size="18" font-weight="800"
+        fill="#FFFFFF" letter-spacing="-0.5">Control</text>
+</svg>

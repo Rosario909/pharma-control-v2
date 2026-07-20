@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" fill="#22FF7F" rx="40"/>
+  <!-- Isotipo grande centrado arriba -->
+  <rect x="155" y="60" width="90" height="90" rx="16" fill="#0D1B2A"/>
+  <text x="200" y="120" font-family="Inter,Segoe UI,sans-serif" font-size="42" font-weight="900"
+        fill="#22FF7F" text-anchor="middle" letter-spacing="-2">PC</text>
+  <!-- Wordmark abajo -->
+  <text x="200" y="230" font-family="Inter,Segoe UI,sans-serif" font-size="36" font-weight="900"
+        fill="#0D1B2A" text-anchor="middle" letter-spacing="-1">Pharma</text>
+  <text x="200" y="278" font-family="Inter,Segoe UI,sans-serif" font-size="36" font-weight="900"
+        fill="#0D1B2A" text-anchor="middle" letter-spacing="-1">Control</text>
+  <!-- Subtexto -->
+  <text x="200" y="340" font-family="Inter,Segoe UI,sans-serif" font-size="14" font-weight="500"
+        fill="#0D5C3A" text-anchor="middle" letter-spacing="2">REGULATORY MONITORING</text>
+</svg>

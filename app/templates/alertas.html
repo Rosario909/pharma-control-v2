@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Alertas — Pharma Control{% endblock %}
+{% block content %}
+  <h1>Alertas</h1>
+  <p class="muted">Generadas automáticamente por ComplianceService según el vencimiento del registro sanitario.</p>
+  <ul class="alert-list" id="alertas-list">
+    <li class="muted">Cargando…</li>
+  </ul>
+{% endblock %}
+{% block scripts %}
+<script>
+  const lista = document.getElementById("alertas-list");
+
+  async function cargar() {
+    const res = await apiFetch("/api/alertas/");
+    if (!res.ok) { lista.innerHTML = '<li class="muted">Error al cargar.</li>'; return; }
+    const { alertas } = await res.json();
+    if (!alertas.length) { lista.innerHTML = '<li class="muted">Sin alertas activas. 🎉</li>'; return; }
+    lista.innerHTML = alertas.map(a => {
+      const prod = a.productos ? a.productos.nombre : "Producto";
+      return `<li class="${a.severidad}">
+        <strong>${prod}</strong> — ${a.mensaje}
+      </li>`;
+    }).join("");
+  }
+
+  cargar();
+</script>
+{% endblock %}

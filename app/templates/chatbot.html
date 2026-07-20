@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Chatbot — Pharma Control{% endblock %}
+{% block content %}
+  <h1>Asistente regulatorio</h1>
+  <div class="chat">
+    <div class="chat-log" id="chat-log">
+      <div class="msg bot">Hola, pregúntame sobre productos, vencimientos, alertas o NOMs.</div>
+    </div>
+    <form id="chat-form" class="chat-form">
+      <input type="text" id="chat-input" placeholder="¿Qué productos están por vencer?" autocomplete="off" required>
+      <button type="submit" class="btn-primary" id="chat-send">Enviar</button>
+    </form>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+  const log = document.getElementById("chat-log");
+  const input = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send");
+
+  function addMsg(texto, clase) {
+    const div = document.createElement("div");
+    div.className = "msg " + clase;
+    div.textContent = texto;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+
+  document.getElementById("chat-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pregunta = input.value.trim();
+    if (!pregunta) return;
+    addMsg(pregunta, "user");
+    input.value = "";
+    sendBtn.disabled = true;
+    const pensando = addMsg("Pensando…", "bot pending");
+    try {
+      const res = await apiFetch("/api/chatbot/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pregunta }),
+      });
+      const data = await res.json().catch(() => ({}));
+      pensando.remove();
+      addMsg(res.ok ? data.respuesta : (data.error || "Error al responder."), "bot");
+    } catch (err) {
+      pensando.remove();
+      addMsg("Error de red.", "bot");
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  });
+</script>
+{% endblock %}

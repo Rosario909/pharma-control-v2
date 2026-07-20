@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 72" width="520" height="72">
+  <rect width="520" height="72" fill="#FFFFFF" rx="10"/>
+  <rect x="1" y="1" width="518" height="70" rx="9" fill="none" stroke="#E5E7EB" stroke-width="1"/>
+  <!-- Isotipo -->
+  <rect x="14" y="10" width="52" height="52" rx="10" fill="#0D5C3A"/>
+  <text x="40" y="44" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="900"
+        fill="#FFFFFF" text-anchor="middle" letter-spacing="-1">PC</text>
+  <!-- Separador -->
+  <line x1="80" y1="18" x2="80" y2="54" stroke="#D1D5DB" stroke-width="1.5"/>
+  <!-- Wordmark -->
+  <text x="98" y="46" font-family="Inter,Segoe UI,sans-serif" font-size="24" font-weight="800"
+        fill="#0D5C3A" letter-spacing="-0.5">Pharma</text>
+  <text x="256" y="46" font-family="Inter,Segoe UI,sans-serif" font-size="24" font-weight="800"
+        fill="#0D1B2A" letter-spacing="-0.5">Control</text>
+</svg>

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Pharma Control{% endblock %}
+{% block content %}
+  <h1>Dashboard</h1>
+  <section class="kpis">
+    <div class="kpi"><span class="kpi-value" id="kpi-total">—</span><span class="kpi-label">Productos</span></div>
+    <div class="kpi"><span class="kpi-value" id="kpi-vigentes">—</span><span class="kpi-label">Vigentes</span></div>
+    <div class="kpi"><span class="kpi-value" id="kpi-por-vencer">—</span><span class="kpi-label">Por vencer</span></div>
+    <div class="kpi"><span class="kpi-value" id="kpi-vencidos">—</span><span class="kpi-label">Vencidos</span></div>
+    <div class="kpi"><span class="kpi-value" id="kpi-alertas">—</span><span class="kpi-label">Alertas activas</span></div>
+    <div class="kpi"><span class="kpi-value" id="kpi-score">—</span><span class="kpi-label">Score riesgo</span></div>
+  </section>
+  <p class="muted" id="dash-msg">Cargando KPIs…</p>
+{% endblock %}
+{% block scripts %}
+<script>
+  async function cargarKpis() {
+    const msg = document.getElementById("dash-msg");
+    try {
+      const res = await apiFetch("/api/dashboard/");
+      if (!res.ok) { msg.textContent = "No se pudieron cargar los KPIs."; return; }
+      const k = await res.json();
+      document.getElementById("kpi-total").textContent = k.total_productos;
+      document.getElementById("kpi-vigentes").textContent = k.vigentes;
+      document.getElementById("kpi-por-vencer").textContent = k.por_vencer;
+      document.getElementById("kpi-vencidos").textContent = k.vencidos;
+      document.getElementById("kpi-alertas").textContent = k.alertas_activas;
+      document.getElementById("kpi-score").textContent = k.score_promedio;
+      msg.hidden = true;
+    } catch (e) { msg.textContent = "Error de red al cargar KPIs."; }
+  }
+  cargarKpis();
+</script>
+{% endblock %}
