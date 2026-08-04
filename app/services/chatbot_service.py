@@ -102,13 +102,18 @@ def _construir_contexto() -> str:
 
 
 def _llamar_gemini(prompt: str) -> str:
-    """Llama a la API de Gemini. Aislada para facilitar pruebas."""
-    import google.generativeai as genai
+    """Llama a la API de Gemini usando la SDK oficial google-genai."""
+    from google import genai
 
-    genai.configure(api_key=Config.GEMINI_API_KEY)
-    model = genai.GenerativeModel(Config.GEMINI_MODEL)
-    resp = model.generate_content(prompt)
-    return (resp.text or "").strip()
+    # Instancia el cliente con la API Key configurada
+    client = genai.Client(api_key=Config.GEMINI_API_KEY)
+
+    response = client.models.generate_content(
+        model=Config.GEMINI_MODEL,
+        contents=prompt,
+    )
+
+    return (response.text or "").strip()
 
 
 def responder(pregunta: str) -> str:
